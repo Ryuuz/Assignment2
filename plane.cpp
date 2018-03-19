@@ -10,13 +10,13 @@ Plane::Plane()
     //The vertices used for drawing the object
     mVertices = new Vertex[mNumberOfVertices]
     {
-        {QVector3D{0.5f, 0.5f, 0.f}, QVector3D{1.f, 0.f, 0.f}, QVector2D{0.f, 0.f}},
-        {QVector3D{-0.5f, 0.5f, 0.f}, QVector3D{0.f, 1.f, 0.f}, QVector2D{0.f, 0.f}},
+        {QVector3D{0.5f, 0.5f, 0.f}, QVector3D{1.f, 0.f, 0.f}, QVector2D{1.f, 1.f}},
+        {QVector3D{-0.5f, 0.5f, 0.f}, QVector3D{0.f, 1.f, 0.f}, QVector2D{0.f, 1.f}},
         {QVector3D{-0.5f, -0.5f, 0.f}, QVector3D{0.f, 0.f, 1.f}, QVector2D{0.f, 0.f}},
 
-        {QVector3D{0.5f, 0.5f, 0.f}, QVector3D{1.f, 0.f, 0.f}, QVector2D{0.f, 0.f}},
+        {QVector3D{0.5f, 0.5f, 0.f}, QVector3D{1.f, 0.f, 0.f}, QVector2D{1.f, 1.f}},
         {QVector3D{-0.5f, -0.5f, 0.f}, QVector3D{0.f, 0.f, 1.f}, QVector2D{0.f, 0.f}},
-        {QVector3D{0.5f, -0.5f, 0.f}, QVector3D{0.f, 1.f, 0.f}, QVector2D{0.f, 0.f}}
+        {QVector3D{0.5f, -0.5f, 0.f}, QVector3D{0.f, 1.f, 0.f}, QVector2D{1.f, 0.f}}
     };
 
     findMaxVertex();
@@ -56,6 +56,7 @@ void Plane::init()
 
     //UV
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6*sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
 
     mDrawType = GL_TRIANGLES;
 

@@ -18,6 +18,7 @@ BoundingVolume::~BoundingVolume()
 
 QVector3D BoundingVolume::getMax()
 {
+    //Transforms the point using the model matrix to get the correct position
     QVector4D temp(mMax, 1.f);
     temp = (*mOwner->getModelMatrix()) * temp;
 
@@ -27,6 +28,7 @@ QVector3D BoundingVolume::getMax()
 
 QVector3D BoundingVolume::getMin()
 {
+    //Transforms the point using the model matrix to get the correct position
     QVector4D temp(mMin, 1.f);
     temp = (*mOwner->getModelMatrix()) * temp;
 

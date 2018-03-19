@@ -20,15 +20,16 @@ Camera::~Camera()
 }
 
 
-void Camera::setViewMatrix(GLfloat x, GLfloat y, GLfloat z)
+void Camera::setViewMatrix(const QVector3D &pos, const QVector3D &focus)
 {
-    mViewMatrix->lookAt(QVector3D(x, y, z), QVector3D(0.f, 0.f, 0.f), QVector3D(0.f, 1.f, 0.f));
+    mViewMatrix->lookAt(pos, focus, QVector3D(0.f, 1.f, 0.f));
 }
 
 
-void Camera::setPerspectiveMatrix()
+void Camera::setPerspectiveMatrix(int width, int height, float fieldOfView, float nearPlane, float farPlane)
 {
-    mPerspectiveMatrix->perspective(45.f, 1.3f, 0.1, 1000.f);
+    float aspectRatio = static_cast<float>(width)/static_cast<float>(height ? height : 1);
+    mPerspectiveMatrix->perspective(fieldOfView, aspectRatio, nearPlane, farPlane);
 }
 
 

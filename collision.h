@@ -13,7 +13,7 @@ class Collision
         ~Collision();
 
         bool collisionDetection(BoundingVolume *obj1, BoundingVolume *obj2, QVector3D vel);
-        void collisionHandling(PhysicsObject *obj1);
+        void collisionHandling(PhysicsObject *obj1, BoundingVolume *obj2);
         void collisionHandling(PhysicsObject *obj1, PhysicsObject *obj2);
 
     private:

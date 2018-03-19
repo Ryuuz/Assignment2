@@ -1,9 +1,10 @@
 #include "physicsobject.h"
 #include "transform.h"
 #include <QKeyEvent>
+#include <QDebug>
 
 
-PhysicsObject::PhysicsObject(SceneObject *a, Shader *s) : ObjectInstance(a, s)
+PhysicsObject::PhysicsObject(SceneObject *a, Shader *s, GLuint t, Texture *tex) : ObjectInstance(a, s, t, tex)
 {
     mVelocity = QVector3D(0.f, 0.f, 0.f);
     mFriction = 0.97;

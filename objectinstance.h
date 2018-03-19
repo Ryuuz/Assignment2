@@ -10,12 +10,13 @@ class QMatrix4x4;
 class Shader;
 class Camera;
 class Transform;
+class Texture;
 
 
 class ObjectInstance : protected QOpenGLFunctions_4_1_Core
 {
     public:
-        ObjectInstance(SceneObject *a = nullptr, Shader *s = nullptr, GLuint t = 999);
+        ObjectInstance(SceneObject *a = nullptr, Shader *s = nullptr, GLuint t = 0, Texture *tex = nullptr);
         ~ObjectInstance();
         void draw(GLuint m, Camera *camera);
 
@@ -35,6 +36,7 @@ class ObjectInstance : protected QOpenGLFunctions_4_1_Core
         BoundingVolume *mBoundingObject;
         Transform *mTransform;
         GLuint mTexUniform;
+        Texture *mTexture;
 };
 
 #endif // OBJECTINSTANCE_H

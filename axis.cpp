@@ -8,9 +8,9 @@ Axis::Axis()
 {
     mNumberOfVertices = 6;
 
-    //The vertices that will be used to draw the objects
+    //The vertices that will be used to draw the object
     mVertices = new Vertex[mNumberOfVertices]
-    {
+    {   //Position                     //Color                   //UV
         {QVector3D{-500.f, 0.f, 0.f},  QVector3D{1.f, 0.f, 0.f}, QVector2D{0.f, 0.f}},
         {QVector3D{500.f, 0.f, 0.f},   QVector3D{1.f, 0.f, 0.f}, QVector2D{0.f, 0.f}},
         {QVector3D{0.f, -500.f, 0.f},  QVector3D{0.f, 1.f, 0.f}, QVector2D{0.f, 0.f}},

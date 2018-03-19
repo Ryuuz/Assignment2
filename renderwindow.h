@@ -20,6 +20,8 @@ class Cube;
 class Collision;
 class TriggerVolume;
 class Texture;
+class Ball;
+class Door;
 
 
 class RenderWindow : public QWindow, protected QOpenGLFunctions_4_1_Core
@@ -40,6 +42,7 @@ class RenderWindow : public QWindow, protected QOpenGLFunctions_4_1_Core
         void render();
         void update();
         void swapCamera();
+        void toggleDoor();
 
     private:
         void init();
@@ -51,7 +54,7 @@ class RenderWindow : public QWindow, protected QOpenGLFunctions_4_1_Core
 
         Shader *mShaderProgram;
         Shader *mTextureShader;
-        Texture *mTexture;
+        std::vector<Texture*> mTextures;
         GLuint mTextureUniform;
         GLint mMatrixUniform;
 
@@ -69,13 +72,13 @@ class RenderWindow : public QWindow, protected QOpenGLFunctions_4_1_Core
         std::vector<ObjectInstance*> mStaticObjects;
         std::vector<PhysicsObject*> mDynamicObjects;
         std::vector<TriggerVolume*> mTriggerVolumes;
-        PhysicsObject *mPlayerBall;
+        Ball *mPlayerBall;
+        Door *mDoor;
 
         QBasicTimer mTimer;     //timer that drives the gameloop
         QTime mTimeStart;       //time variable that reads the actual FPS
 
         MainWindow *mMainWindow;
-        bool yeah = false;
 
         class QOpenGLDebugLogger *mOpenGLDebugLogger{nullptr};
 

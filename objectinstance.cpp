@@ -3,13 +3,14 @@
 #include "shader.h"
 #include "camera.h"
 #include "transform.h"
+#include "texture.h"
 #include <QMatrix4x4>
 #include <QVector3D>
 #include <QVector4D>
 #include <QQuaternion>
 
 
-ObjectInstance::ObjectInstance(SceneObject *a, Shader *s, GLuint t) : mModel(a), mShader(s), mTexUniform(t)
+ObjectInstance::ObjectInstance(SceneObject *a, Shader *s, GLuint t, Texture *tex) : mModel(a), mShader(s), mTexUniform(t), mTexture(tex)
 {
     mModelMatrix = new QMatrix4x4;
     mModelMatrix->setToIdentity();
@@ -23,6 +24,7 @@ ObjectInstance::~ObjectInstance()
     delete mModelMatrix;
     delete mBoundingObject;
     delete mTransform;
+    mTexture = nullptr;
     mModel = nullptr;
     mShader = nullptr;
 }
@@ -38,8 +40,9 @@ void ObjectInstance::draw(GLuint m, Camera *camera)
         glUseProgram(mShader->getProgram());
         glBindVertexArray(mModel->getVao());
 
-        if(mTexUniform != 999)
+        if(mTexture)
         {
+            glBindTexture(GL_TEXTURE_2D, mTexture->id());
             glUniform1i(mTexUniform, 0);
         }
 

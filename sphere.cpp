@@ -103,17 +103,17 @@ void Sphere::subdivide(const QVector3D &u, const QVector3D &v, const QVector3D &
 void Sphere::makeTriangle(const QVector3D &u, const QVector3D &v, const QVector3D &w)
 {
     mVertices[mIndex].setPosition(u);
-    mVertices[mIndex].setColor(1.f, 0.f, 0.f);
+    mVertices[mIndex].setColor(0.0001f*mIndex, 0.f, 0.f);
     mVertices[mIndex].setUV(0.f, 0.f);
     mIndex++;
 
     mVertices[mIndex].setPosition(v);
-    mVertices[mIndex].setColor(1.f, 0.f, 0.f);
+    mVertices[mIndex].setColor(0.01f*mIndex, 0.f, 0.f);
     mVertices[mIndex].setUV(0.f, 0.f);
     mIndex++;
 
     mVertices[mIndex].setPosition(w);
-    mVertices[mIndex].setColor(1.f, 0.f, 0.f);
+    mVertices[mIndex].setColor(0.01f*mIndex, 0.f, 0.f);
     mVertices[mIndex].setUV(0.f, 0.f);
     mIndex++;
 }

@@ -24,6 +24,8 @@
 #include "collision.h"
 #include "transform.h"
 #include "texture.h"
+#include "door.h"
+#include "ball.h"
 
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
@@ -48,7 +50,9 @@ RenderWindow::~RenderWindow()
     delete mCamera2;
 
     delete mShaderProgram;
+    delete mTextureShader;
     mPlayerBall = nullptr;
+    mDoor = nullptr;
 
     for(auto element : mStaticObjects)
     {
@@ -56,6 +60,16 @@ RenderWindow::~RenderWindow()
     }
 
     for(auto element : mDynamicObjects)
+    {
+        delete element;
+    }
+
+    for(auto element : mTriggerVolumes)
+    {
+        delete element;
+    }
+
+    for(auto element : mTextures)
     {
         delete element;
     }
@@ -87,10 +101,10 @@ void RenderWindow::init()
     mCamera2 = new Camera;
 
     //Set the perspective and view matrices
-    mCamera1->setPerspectiveMatrix();
-    mCamera1->setViewMatrix(1.f, 4.f, 4.f);
-    mCamera2->setPerspectiveMatrix();
-    mCamera2->setViewMatrix(0.f, 4.f, 4.f);
+    mCamera1->setPerspectiveMatrix(width(), height());
+    mCamera1->setViewMatrix(QVector3D(1.f, 4.f, 4.f), QVector3D(0.f, 0.f, 0.f));
+    mCamera2->setPerspectiveMatrix(width(), height());
+    mCamera2->setViewMatrix(QVector3D(1.4f, 0.9f, -0.2f), QVector3D(0.7f, 0.f, -0.8f));
 
     mCurrentCamera = mCamera1;
 
@@ -104,10 +118,13 @@ void RenderWindow::init()
     mShaderProgram = new Shader("vertexshader.vert", "fragmentshader.frag");
     mTextureShader = new Shader("textureshader.vert", "textureshader.frag");
 
-    mTexture = new Texture("../Assignment2/Bricks.bmp");
+    //Make textures
+    mTextures.push_back(new Texture("Bricks.bmp"));
+    mTextures.push_back(new Texture("Conc.bmp"));
+    mTextures.push_back(new Texture("Gate.bmp"));
+    mTextures.push_back(new Texture("Grass.bmp"));
     mTextureUniform = glGetUniformLocation(mTextureShader->getProgram(), "textureSampler");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, mTexture->id());
 
     //enable the matrixUniform
     mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" ); // enable in shader and in render() function also to use matrix
@@ -143,96 +160,115 @@ void RenderWindow::createObjects()
     mStaticObjects.push_back(obj);
 
     //Ground plane
-    obj = new ObjectInstance(mPlane, mShaderProgram);
+    obj = new ObjectInstance(mPlane, mTextureShader, mTextureUniform, mTextures.at(3));
     obj->getTransform()->setRotation(-90.f, 0.f, 0.f);
     obj->getTransform()->setScale(3.f, 3.f, 3.f);
     mStaticObjects.push_back(obj);
 
     //Walls
-    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(0));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(0.f, 0.2f, -1.5f);
     obj->getTransform()->setScale(3.1f, 0.4f, 0.1f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(0));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(0.f, 0.2f, 1.5f);
     obj->getTransform()->setScale(3.1f, 0.4f, 0.1f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(0));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(-1.5f, 0.2f, 0.f);
     obj->getTransform()->setScale(0.1f, 0.4f, 3.f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(0));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(1.5f, 0.2f, 0.f);
     obj->getTransform()->setScale(0.1f, 0.4f, 3.f);
     mStaticObjects.push_back(obj);
 
     //House
-    obj = new ObjectInstance(mCube, mShaderProgram);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(1));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(0.75f, 0.5f, -1.3f);
     obj->getTransform()->setScale(1.2f, 1.f, 0.1f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mShaderProgram);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(1));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(1.4f, 0.5f, -0.75f);
     obj->getTransform()->setScale(0.1f, 1.f, 1.2f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mShaderProgram);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(1));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(0.1f, 0.5f, -0.75f);
     obj->getTransform()->setScale(0.1f, 1.f, 1.2f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mShaderProgram);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(1));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(1.2f, 0.5f, -0.1f);
     obj->getTransform()->setScale(0.5f, 1.f, 0.1f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mShaderProgram);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(1));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(0.3f, 0.5f, -0.1f);
     obj->getTransform()->setScale(0.5f, 1.f, 0.1f);
     mStaticObjects.push_back(obj);
 
-    obj = new ObjectInstance(mCube, mShaderProgram);
+    obj = new ObjectInstance(mCube, mTextureShader, mTextureUniform, mTextures.at(1));
     obj->setBoundingObject(BoundType::box);
     obj->getTransform()->setPosition(0.75f, 1.05f, -0.75f);
     obj->getTransform()->setScale(1.4f, 0.1f, 1.4f);
     mStaticObjects.push_back(obj);
 
-    //Trigger volume
+    //Trigger volumes
     triggObj = new TriggerVolume;
     triggObj->setBoundingObject(QVector3D(0.5f, 1.f, 0.5f), QVector3D(-0.5f, 0.f, -0.5f), BoundType::trigger);
-    triggObj->getTransform()->setScale(1.3f, 1.f, 1.2f);
+    triggObj->getTransform()->setScale(1.3f, 1.f, 1.3f);
     triggObj->getTransform()->setPosition(0.75f, 0.f, -0.75f);
     connect(triggObj, &TriggerVolume::entered, this, &RenderWindow::swapCamera);
     connect(triggObj, &TriggerVolume::exited, this, &RenderWindow::swapCamera);
     mTriggerVolumes.push_back(triggObj);
 
-    //Ball
-    physObj = new PhysicsObject(mSphere, mShaderProgram);
-    physObj->setBoundingObject(BoundType::sphere);
-    physObj->getTransform()->setPosition(0.2f, 0.15f, 0.5f);
-    physObj->getTransform()->setScale(0.15f, 0.15f, 0.15f);
-    mDynamicObjects.push_back(physObj);
+    triggObj = new TriggerVolume;
+    triggObj->setBoundingObject(QVector3D(0.5f, 1.f, 0.5f), QVector3D(-0.5f, 0.f, -0.5f), BoundType::trigger);
+    triggObj->getTransform()->setScale(0.4f, 1.f, 1.2f);
+    triggObj->getTransform()->setPosition(0.76f, 0.f, -0.3f);
+    connect(triggObj, &TriggerVolume::entered, this, &RenderWindow::toggleDoor);
+    connect(triggObj, &TriggerVolume::exited, this, &RenderWindow::toggleDoor);
+    mTriggerVolumes.push_back(triggObj);
 
-    physObj = new PhysicsObject(mSphere, mShaderProgram);
+    //Balls
+    mPlayerBall = new Ball(mSphere, mShaderProgram);
+    mPlayerBall->setBoundingObject(BoundType::sphere);
+    mPlayerBall->getTransform()->setPosition(0.2f, 0.15f, 0.5f);
+    mPlayerBall->getTransform()->setScale(0.15f, 0.15f, 0.15f);
+    mDynamicObjects.push_back(mPlayerBall);
+
+    physObj = new Ball(mSphere, mShaderProgram);
     physObj->setBoundingObject(BoundType::sphere);
     physObj->getTransform()->setPosition(-0.6f, 0.15f, -1.f);
     physObj->getTransform()->setScale(0.15f, 0.15f, 0.15f);
     mDynamicObjects.push_back(physObj);
 
-    mPlayerBall = mDynamicObjects.at(0);
+    physObj = new Ball(mSphere, mShaderProgram);
+    physObj->setBoundingObject(BoundType::sphere);
+    physObj->getTransform()->setPosition(-0.6f, 0.15f, 1.f);
+    physObj->getTransform()->setScale(0.15f, 0.15f, 0.15f);
+    mDynamicObjects.push_back(physObj);
+
+    //Door
+    mDoor = new Door(mPlane, mTextureShader, mTextureUniform, mTextures.at(2));
+    mDoor->setBoundingObject(BoundType::plane);
+    mDoor->getTransform()->setPosition(0.76f, 0.5f, -0.05f);
+    mDoor->getTransform()->setScale(0.4f, 1.f, 1.f);
+    mDynamicObjects.push_back(mDoor);
 
     obj = nullptr;
     triggObj = nullptr;
@@ -271,17 +307,19 @@ void RenderWindow::update()
 {
     for(auto object : mDynamicObjects)
     {
+        //Check object against static objects for collisions
         for(auto item : mStaticObjects)
         {
             if(object->getBounds() && item->getBounds())
             {
                 if(mCollision->collisionDetection(object->getBounds(), item->getBounds(), object->getVelocity()))
                 {
-                    mCollision->collisionHandling(object);
+                    mCollision->collisionHandling(object, item->getBounds());
                 }
             }
         }
 
+        //Check object against other physics objects for collision
         for(auto item : mDynamicObjects)
         {
             if(item != object && item->getBounds() && object->getBounds())
@@ -293,9 +331,11 @@ void RenderWindow::update()
             }
         }
 
+        //Move object
         object->physicsUpdate();
     }
 
+    //Check if object is entering a trigger volume
     for(auto item : mTriggerVolumes)
     {
         if(mPlayerBall->getBounds() && item->getBounds())
@@ -313,6 +353,7 @@ void RenderWindow::update()
 }
 
 
+//Swap the current camera
 void RenderWindow::swapCamera()
 {
     if(mCurrentCamera == mCamera1)
@@ -323,6 +364,13 @@ void RenderWindow::swapCamera()
     {
         mCurrentCamera = mCamera1;
     }
+}
+
+
+//Set the door to open or close depending on what it currently is
+void RenderWindow::toggleDoor()
+{
+    mDoor->setDoorStatus();
 }
 
 

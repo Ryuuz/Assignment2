@@ -1,10 +1,11 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-02-22T18:23:09
+# Project created by QtCreator 2018-03-03T23:22:33
 #
 #-------------------------------------------------
 
 QT       += core gui widgets
+
 
 TARGET = Assignment2
 TEMPLATE = app
@@ -25,51 +26,52 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    renderwindow.cpp \
-    shader.cpp \
-    sceneobject.cpp \
-    vertex.cpp \
     axis.cpp \
-    objectinstance.cpp \
-    camera.cpp \
-    plane.cpp \
-    sphere.cpp \
-    physicsobject.cpp \
     boundingvolume.cpp \
+    camera.cpp \
     collision.cpp \
     cube.cpp \
-    triggervolume.cpp \
+    objectinstance.cpp \
+    physicsobject.cpp \
+    plane.cpp \
+    renderwindow.cpp \
+    sceneobject.cpp \
+    shader.cpp \
+    sphere.cpp \
+    texture.cpp \
     transform.cpp \
-    texture.cpp
+    triggervolume.cpp \
+    vertex.cpp \
+    door.cpp \
+    ball.cpp
 
 HEADERS += \
         mainwindow.h \
-    renderwindow.h \
-    shader.h \
-    sceneobject.h \
-    vertex.h \
     axis.h \
-    objectinstance.h \
-    camera.h \
-    plane.h \
-    sphere.h \
-    physicsobject.h \
     boundingvolume.h \
+    camera.h \
     collision.h \
+    constants.h \
     cube.h \
-    triggervolume.h \
-    transform.h \
+    objectinstance.h \
+    physicsobject.h \
+    plane.h \
+    renderwindow.h \
+    sceneobject.h \
+    shader.h \
+    sphere.h \
     texture.h \
-    constants.h
+    transform.h \
+    triggervolume.h \
+    vertex.h \
+    door.h \
+    ball.h
 
 FORMS += \
-        mainwindow.ui
+    mainwindow.ui
 
 DISTFILES += \
     fragmentshader.frag \
-    vertexshader.vert \
+    textureshader.frag \
     textureshader.vert \
-    textureshader.frag
-
-RESOURCES += \
-    assets.qrc
+    vertexshader.vert

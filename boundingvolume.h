@@ -9,7 +9,8 @@ enum BoundType
 {
     sphere,
     box,
-    trigger
+    trigger,
+    plane
 };
 
 class BoundingVolume
@@ -20,7 +21,7 @@ class BoundingVolume
 
         QVector3D getMax();
         QVector3D getMin();
-        BoundType getType() const {return mType;}
+        const BoundType& getType() const {return mType;}
 
     protected:        
         QVector3D mMax;
